@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block page_title %}Settings{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card-panel">
+      <span class="section-title"><i class="bi bi-envelope-gear me-1"></i>SMTP Configuration</span>
+      <p class="text-muted-custom" style="font-size:0.85rem;">
+        SMTP credentials are loaded from your <code>.env</code> file for security and are read-only here.
+        Edit <code>.env</code> and restart the app to change them.
+      </p>
+      <table class="table" style="font-size:0.9rem;">
+        <tbody>
+          <tr><th style="width:180px;">Sender Email</th><td>{{ sender_email or '⚠️ Not configured' }}</td></tr>
+          <tr><th>SMTP Server</th><td>{{ smtp_server }}</td></tr>
+          <tr><th>SMTP Port</th><td>{{ smtp_port }}</td></tr>
+          <tr><th>App Password</th><td>{{ '●●●●●●●●●●●●●●●●' if sender_email else '⚠️ Not configured' }}</td></tr>
+        </tbody>
+      </table>
+
+      {% if not sender_email %}
+      <div class="alert alert-warning">
+        No sender email configured. Add <code>SENDER_EMAIL</code> and <code>APP_PASSWORD</code> to your <code>.env</code> file.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card-panel">
+      <span class="section-title"><i class="bi bi-shield-lock me-1"></i>How to get a Gmail App Password</span>
+      <ol class="text-muted-custom" style="font-size:0.85rem;padding-left:18px;">
+        <li>Enable 2-Step Verification on your Google account.</li>
+        <li>Go to <strong>Google Account → Security → App Passwords</strong>.</li>
+        <li>Generate a new app password for "Mail".</li>
+        <li>Copy the 16-character password into <code>APP_PASSWORD</code> in your <code>.env</code> file.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="stat-grid">
+  <div class="stat-card sent">
+    <div class="stat-label">Emails Sent</div>
+    <div class="stat-value">{{ total_sent }}</div>
+    <i class="bi bi-check-circle stat-icon" style="color:var(--success);"></i>
+  </div>
+  <div class="stat-card failed">
+    <div class="stat-label">Failed</div>
+    <div class="stat-value">{{ total_failed }}</div>
+    <i class="bi bi-x-circle stat-icon" style="color:var(--danger);"></i>
+  </div>
+  <div class="stat-card pending">
+    <div class="stat-label">Pending</div>
+    <div class="stat-value">{{ total_pending }}</div>
+    <i class="bi bi-hourglass-split stat-icon" style="color:var(--warning);"></i>
+  </div>
+  <div class="stat-card scheduled">
+    <div class="stat-label">Scheduled</div>
+    <div class="stat-value">{{ total_scheduled }}</div>
+    <i class="bi bi-calendar-event stat-icon" style="color:var(--indigo-600);"></i>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card-panel">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="section-title mb-0">Recent Activity</span>
+        <a href="{{ url_for('history') }}" style="font-size:0.85rem;font-weight:600;color:var(--indigo-600);">View all →</a>
+      </div>
+      {% if recent_logs %}
+      <div class="table-panel" style="border:none;">
+        <table class="log-table">
+          <thead><tr><th>Recipient</th><th>Subject</th><th>Status</th><th>Time</th></tr></thead>
+          <tbody>
+            {% for log in recent_logs %}
+            <tr>
+              <td>{{ log.recipient }}</td>
+              <td>{{ log.subject[:40] }}</td>
+              <td><span class="badge-status {{ log.status }}">{{ log.status }}</span></td>
+              <td class="text-muted-custom">{{ log.timestamp.strftime('%b %d, %H:%M') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-muted-custom">No emails sent yet. <a href="{{ url_for('compose') }}">Compose your first one →</a></p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card-panel mb-3">
+      <span class="section-title">Quick Actions</span>
+      <div class="d-grid gap-2">
+        <a href="{{ url_for('compose') }}" class="btn btn-brand"><i class="bi bi-pencil-square me-1"></i> Compose Email</a>
+        <a href="{{ url_for('templates_page') }}" class="btn btn-outline-brand"><i class="bi bi-file-earmark-plus me-1"></i> New Template</a>
+        <a href="{{ url_for('settings') }}" class="btn btn-outline-brand"><i class="bi bi-gear me-1"></i> SMTP Settings</a>
+      </div>
+    </div>
+    <div class="card-panel">
+      <span class="section-title">Overview</span>
+      <p class="text-muted-custom" style="font-size:0.85rem;">You have <strong>{{ total_templates }}</strong> saved template(s) and <strong>{{ total_scheduled }}</strong> email(s) queued for later delivery.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

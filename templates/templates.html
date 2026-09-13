@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Templates{% endblock %}
+{% block page_title %}Email Templates{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card-panel">
+      <span class="section-title">Create New Template</span>
+      <form method="POST">
+        <div class="mb-3">
+          <label class="form-label">Template Name</label>
+          <input type="text" class="form-control" name="name" placeholder="e.g. Welcome Email" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Subject</label>
+          <input type="text" class="form-control" name="subject" placeholder="Subject line" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Body</label>
+          <textarea class="form-control" name="body" rows="8" placeholder="HTML or plain text with {{ '{{placeholders}}' }}" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-brand w-100"><i class="bi bi-save me-1"></i> Save Template</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <span class="section-title">Saved Templates ({{ templates_list|length }})</span>
+    {% if templates_list %}
+    <div class="template-grid">
+      {% for t in templates_list %}
+      <div class="template-card">
+        <h5>{{ t.name }}</h5>
+        <div class="tpl-subject"><strong>Subject:</strong> {{ t.subject }}</div>
+        <div class="tpl-body">{{ t.body|striptags }}</div>
+        <div class="d-flex gap-2">
+          <a href="{{ url_for('compose') }}" class="btn btn-sm btn-outline-brand flex-fill">Use</a>
+          <form method="POST" action="{{ url_for('delete_template', template_id=t.id) }}" onsubmit="return confirm('Delete this template?');">
+            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="card-panel text-center text-muted-custom">No templates saved yet. Create one on the left.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

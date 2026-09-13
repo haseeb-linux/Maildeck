@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Compose{% endblock %}
+{% block page_title %}Compose Email{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-8">
+    <form method="POST" enctype="multipart/form-data" class="card-panel">
+      <input type="hidden" name="send_mode" id="send_mode_input" value="now">
+
+      <div class="mb-3">
+        <label class="form-label">Load from template</label>
+        <select class="form-select" id="templateSelect">
+          <option value="">-- Select a saved template (optional) --</option>
+          {% for t in templates_list %}
+          <option value="{{ t.id }}">{{ t.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Recipients</label>
+        <textarea class="form-control" id="recipients" name="recipients" rows="3"
+          placeholder="Comma or newline separated: friend@example.com, another@example.com"></textarea>
+        <div class="form-text">Recipients entered: <span id="recipientCount">0</span></div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Or upload recipients CSV</label>
+        <input type="file" class="form-control" name="csv_file" accept=".csv">
+        <div class="form-text">CSV must include an <code>email</code> column. Extra columns (e.g. <code>name</code>) can be used as placeholders like <code>{{ '{{name}}' }}</code>.</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Subject</label>
+        <input type="text" class="form-control" id="subject" name="subject" placeholder="e.g. Hello {{ '{{name}}' }}, here's our update!" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Body (HTML supported)</label>
+        <textarea class="form-control" id="body" name="body" rows="10" placeholder="Write your message here. Use {{ '{{name}}' }}, {{ '{{company}}' }}, etc. as dynamic placeholders." required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Attachments</label>
+        <input type="file" class="form-control" name="attachments" multiple>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label d-block">When to send</label>
+        <div class="chip-toggle">
+          <button type="button" class="active" data-send-mode="now">Send Now</button>
+          <button type="button" data-send-mode="schedule">Schedule</button>
+        </div>
+      </div>
+
+      <div class="mb-3" id="scheduleFields" style="display:none;">
+        <label class="form-label">Scheduled date &amp; time</label>
+        <input type="datetime-local" class="form-control" name="scheduled_time">
+      </div>
+
+      <button type="submit" class="btn btn-brand w-100"><i class="bi bi-send me-1"></i> Send Email</button>
+    </form>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card-panel mb-3">
+      <span class="section-title"><i class="bi bi-lightning-charge me-1"></i>Send a Test Email</span>
+      <form id="testEmailForm">
+        <div class="mb-2">
+          <input type="email" name="test_email" class="form-control" placeholder="test@example.com" required>
+        </div>
+        <button type="submit" class="btn btn-outline-brand w-100">Send Test</button>
+      </form>
+      <div id="testEmailResult" class="mt-2" style="display:none;"></div>
+    </div>
+
+    <div class="card-panel">
+      <span class="section-title"><i class="bi bi-info-circle me-1"></i>Placeholder Tips</span>
+      <ul class="text-muted-custom" style="font-size:0.83rem;padding-left:18px;">
+        <li>Use <code>{{ '{{name}}' }}</code> to insert the recipient's name (from CSV column).</li>
+        <li>Any CSV column becomes a placeholder: <code>{{ '{{company}}' }}</code>, <code>{{ '{{city}}' }}</code>, etc.</li>
+        <li>Unmatched placeholders are left as-is.</li>
+        <li>HTML tags like <code>&lt;b&gt;</code>, <code>&lt;a href&gt;</code> render correctly.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
